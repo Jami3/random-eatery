@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<!-- Welcome to the 1 file wonder -->
+
+<html lang="en" dir="ltr">
+  <head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+
+        <style>
+        input[type=range]::-webkit-slider-thumb {
+          background-color: #69f0ae;
+        }
+        input[type=range]::-moz-range-thumb {
+          background-color: #69f0ae;
+        }
+        input[type=range]::-ms-thumb {
+          background-color: #69f0ae;
+        }
+          .myStyle{
+            width: 300px;
+          }
+          .screen{
+            position: fixed;
+            width: 500px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px; /* Negative half of height. */
+            margin-left: -250px; /* Negative half of width. */
+          }
+        </style>
+    
+    <title></title>
+  </head>
+  <body>
+      <p style="margin-top: 0px; text-align: center;">Your random food is:</p>
+<div class="center screen main">
+
+  <img id="restImg" src="" alt="" style="margin-top: -200px">
+  <h2 id="restTitle"></h2>
+  <p id="restInfo"></p>
+  <a id="reroll" class="waves-effect waves-light btn black-text grey myStyle">Reroll</a>
+</div>
+
+<script type="text/javascript">
+var res = 0, stat = 0;
+
+
+$(document).ready(()=>{
+
+
+  $("#reroll").click(()=>{
+    search(res,stat);
+  });
+})
+
+function search(results, status){
+  res = results;
+  stat = status;
+  let rand = Math.floor(Math.random() * Math.floor(results.length));
+  $("#restTitle").text(results[rand].name);
+  $("#restInfo").text(results[rand].formatted_address);
+  $("#restImg").attr("src",results[rand].photos[0].getUrl({maxWidth: 400, maxHeight: 400}));
+  //console.log(results[rand]);
+  //console.log(results[rand].photos[0].getUrl({maxWidth: 640}));
+}
+
+</script>
+<div id="map"></div>
+    <script>
+      // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 6
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+
+              var request = {
+                  location: new google.maps.LatLng(position.coords.latitude,position.coords.longitude),
+                  radius: '2000',
+                  query: 'food',
+                  openNow: true
+                };
+
+              service = new google.maps.places.PlacesService(map);
+              service.textSearch(request, search);
+
+
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUPGzQIXzW-9sUCFqYhFu9tdExFD-48rY&callback=initMap&libraries=places">
+    </script>
+
+
+
+
+<!-- AIzaSyDUPGzQIXzW-9sUCFqYhFu9tdExFD-48rY -->
+  </body>
+</html>
+
+<!-- https://maps.googleapis.com/maps/api/place/nearbysearch/json?query=food+near+me&key=AIzaSyDUPGzQIXzW-9sUCFqYhFu9tdExFD-48rY -->
